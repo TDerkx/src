@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#524252</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#FFFFFF</color>
+    <color name="darkPurple">#635063</color>
+    <color name="tab_inactive">#e3d2e3</color>
+    <color name="Flan">#635063</color>
+    <color name="Plum">#b78899</color>
+    <color name="Cheeks">#FA9B9B</color>
+    <color name="Creme">#F1D4AF</color>
+    <color name="Peach">#EBBCA4</color>
+    <color name="White">#FFFFFF</color>
+    <color name="Button1">#FFFFFF</color>
+    <color name="Button2">#b387b3</color>
+</resources>
