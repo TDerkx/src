@@ -69,7 +69,7 @@
     <Button
         android:layout_width="166dp"
         android:layout_height="wrap_content"
-        android:background="@color/Plum"
+        android:background="@color/lightplum"
         android:text="Login"
         android:id="@+id/loginButton"
         android:layout_below="@+id/passwordinput"

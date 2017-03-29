@@ -11,20 +11,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.support.v4.app.FragmentActivity;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * Created by Stijn Albert  on 19-3-2017.
  */
 
-public class Tabs extends Activity implements OnMapReadyCallback{
+public class Tabs extends Activity {
 
     public TabHost th;
 
@@ -49,13 +41,9 @@ public class Tabs extends Activity implements OnMapReadyCallback{
         specs = th.newTabSpec("tag 3");
         specs.setContent(R.id.tab3);
         specs.setIndicator("MAP");
-        setContentView(R.layout.tabs);
         th.addTab(specs);
 
         th.setCurrentTab(1);
-
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
         for (int i = 0; i < th.getTabWidget().getChildCount(); i++) {
             TextView tv = (TextView) th.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
@@ -89,13 +77,5 @@ public class Tabs extends Activity implements OnMapReadyCallback{
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-    }
-    @Override
-    public void onMapReady(GoogleMap map) {
-        /*use following to add markers
-        map.addMarker(new MarkerOptions()
-                .position(new LatLng(0, 0))
-                .title("Marker"));
-                */
     }
 }
