@@ -4,19 +4,29 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/iconvagarismall"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Tabs"
-            android:screenOrientation="portrait">
+        <activity
+            android:name=".Splash"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".Login"
+            android:screenOrientation="portrait">
+        </activity>
         <activity android:name=".Upload"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".Tabs"
             android:screenOrientation="portrait">
         </activity>
 
