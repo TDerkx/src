@@ -69,13 +69,12 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:text="Here comes map activity"
-                        android:textSize="50dp"
-                        android:id="@+id/text3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                    </TextView>
+                    <fragment android:id="@+id/map"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        class="com.google.android.gms.maps.MapFragment"/>
 
                 </LinearLayout>
             </FrameLayout>

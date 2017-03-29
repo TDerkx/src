@@ -29,6 +29,9 @@
         <activity android:name=".Tabs"
             android:screenOrientation="portrait">
         </activity>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAy56QDfpBeEiit_R1co3urve-0O7AhQAY"/>
 
     </application>
 
