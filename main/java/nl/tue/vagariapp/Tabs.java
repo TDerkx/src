@@ -57,15 +57,7 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        mapFragment.onResume(); // needed to get the map to display immediately;
-            /* the next part should implement moving.
-
-            mapFragment.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            mapFragment.getUiSettings().setCompassEnabled(true);
-            mapFragment.getUiSettings().setZoomControlsEnabled(true);
-            mapFragment.getUiSettings().setZoomGesturesEnabled(true);
-            mapFragment.getUiSettings().setScrollGesturesEnabled(true);
-            */
+        mapFragment.onResume();
 
         for (int i = 0; i < th.getTabWidget().getChildCount(); i++) {
             TextView tv = (TextView) th.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
@@ -103,9 +95,16 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLng sydney = new LatLng(-33.852, 151.211);
+        LatLng standard = new LatLng(0, 0);
+        /*this adds a marker
         googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                .title("Marker in Sydney")); */
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(standard));
+        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setZoomGesturesEnabled(true);
+        googleMap.getUiSettings().setScrollGesturesEnabled(true);
+
     }
 }
