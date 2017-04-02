@@ -137,7 +137,7 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
         bSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void OnClick(View v) {
-                Intent intent = new Intent(Tabs.this, Settings.Class);
+                Intent intent = new Intent(Tabs.this, Settings.class);
                 startActivity(intent);
             }
         });
