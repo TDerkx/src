@@ -2,14 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <include
-        android:id="@+id/tool_bar"
-        layout="@layout/tool_bar"
-        android:layout_width="match_parent"
+    
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        >
-    </include>
+        
+        <include
+            android:id="@+id/tool_bar"
+            layout="@layout/tool_bar">
+        </include>
+        
+     
 
     <TabHost
         android:layout_width="match_parent"
