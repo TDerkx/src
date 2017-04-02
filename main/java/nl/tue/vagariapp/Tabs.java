@@ -17,6 +17,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -95,10 +97,12 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        /* use the followimg part in a for each statement
+         * or something for all pictures in a database.
+         * sort colors by album
+         */
         LatLng standard = new LatLng(0, 0);
-        /*this adds a marker
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney")); */
+        addMarker(googleMap, standard, "this is a title", "this is a snippet", (float)150);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(standard));
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         googleMap.getUiSettings().setCompassEnabled(true);
@@ -106,5 +110,16 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
         googleMap.getUiSettings().setScrollGesturesEnabled(true);
 
+    }
+
+            /*this adds a marker */
+    private void addMarker(GoogleMap map, LatLng latlong, String title, String snippet, Float hue) {
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(hue);
+        map.addMarker(new MarkerOptions()
+                .position(latlong)
+                .title(title)
+                .snippet(snippet))
+                .setIcon(bitmapDescriptor);
+        ;
     }
 }
