@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -21,6 +25,12 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 /**
  * Created by Stijn Albert  on 19-3-2017.
@@ -29,6 +39,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
 
     public TabHost th;
+    private DatabaseReference mDatabase;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthList;
 
 
     @Override
@@ -36,6 +50,30 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs);
 
+        mAuth = FirebaseAuth.getInstance();
+        mAuthList = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
+                    // User is signed in
+                    startActivity(new Intent(Tabs.this, Login.class));
+
+                }
+            }
+        };
+
+        Button logout;
+        View toolbar = findViewById(R.id.tool_bar);
+
+        logout = (Button) toolbar.findViewById(R.id.logout_button);
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startSignout();
+            }
+        });
 
         th = (TabHost) findViewById(R.id.tabHost);
         th.setup();
@@ -93,6 +131,11 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
+    }
+
+    private void startSignout() {
+        mAuth.signOut();
+        startActivity(new Intent(Tabs.this, Login.class));
     }
 
     @Override
