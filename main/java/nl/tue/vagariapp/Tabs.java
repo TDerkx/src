@@ -2,6 +2,7 @@ package nl.tue.vagariapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -12,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +46,6 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthList;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,10 +129,18 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
                 startActivity(intent);
             }
         });
-
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        
+        GridView gv = (GridView)findViewById(R.id.gridView);
+        gv.setAdapter(new ImageAdapter(this));
+        
+        ImageButton bSettings = (ImageButton)findViewById(R.id.bSettings);
+        bSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void OnClick(View v) {
+                Intent intent = new Intent(Tabs.this, Settings.Class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void startSignout() {
