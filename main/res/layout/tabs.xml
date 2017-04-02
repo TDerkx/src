@@ -12,7 +12,18 @@
             layout="@layout/tool_bar">
         </include>
         
-     
+     <ImageButton
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@color/darkPurple"
+            android:src="@drawable/iconsettings"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:id="@+id/bSettings"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp"/>
+    </RelativeLayout>
 
     <TabHost
         android:layout_width="match_parent"
@@ -59,13 +70,14 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:text="Here comes gallery activity"
-                        android:textSize="50dp"
-                        android:id="@+id/text2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                    </TextView>
+                    <GridView
+                        android:id="@+id/gridView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
+                        android:numColumns="4"
+                        android:verticalSpacing="5dp"
+                        android:horizontalSpacing="5dp"/>
 
                 </LinearLayout>
 
