@@ -65,18 +65,6 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
             }
         };
 
-        Button logout;
-        View toolbar = findViewById(R.id.tool_bar);
-
-        logout = (Button) toolbar.findViewById(R.id.logout_button);
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startSignout();
-            }
-        });
-
         th = (TabHost) findViewById(R.id.tabHost);
         th.setup();
         TabHost.TabSpec specs = th.newTabSpec("tag 1");
