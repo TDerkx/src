@@ -48,7 +48,7 @@ public class Upload extends Activity {
         btn_choose_photo.setOnClickListener(btnChoosePhotoPressed);
     }
     
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
+    public static final int MY_PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 123;
     
     public boolean checkPermissionREAD_EXTERNAL_STORAGE(final Context context) {
         int check = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -64,7 +64,7 @@ public class Upload extends Activity {
             } else {
                 // No explanation needed, let's request the permission.
                 ActivityCompat.requestPermissions((Activity) context, 
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         MY_PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
             }
             return false;
@@ -89,7 +89,7 @@ public class Upload extends Activity {
     public View.OnClickListener btnChoosePhotoPressed = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent i = new intent(Intent.ACTION_PICK,
+            Intent i = new Intent(Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
             final int ACTIVITY_SELECT_IMAGE = 1234;
             startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
@@ -99,7 +99,7 @@ public class Upload extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
-            switch (requestcode) {
+            switch (requestCode) {
                 case 1234:
                     if (resultCode == RESULT_OK) {
                         Uri selectedImage = data.getData();
@@ -117,7 +117,7 @@ public class Upload extends Activity {
                         
                         if (yourSelectedImage != null) {
                             Intent intent = new Intent(Upload.this, Tabs.class);
-                            startActivty(intent);
+                            startActivity(intent);
                             finish();
                         }
                     }

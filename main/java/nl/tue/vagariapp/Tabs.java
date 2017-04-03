@@ -136,7 +136,7 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
         ImageButton bSettings = (ImageButton)findViewById(R.id.bSettings);
         bSettings.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void OnClick(View v) {
+            public void onClick(View view) {
                 Intent intent = new Intent(Tabs.this, Settings.class);
                 startActivity(intent);
             }
