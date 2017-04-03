@@ -131,11 +131,6 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
         });
     }
 
-    private void startSignout() {
-        mAuth.signOut();
-        startActivity(new Intent(Tabs.this, Login.class));
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         /* use the followimg part in a for each statement
