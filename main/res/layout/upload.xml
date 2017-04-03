@@ -25,9 +25,17 @@
             android:layout_marginLeft="20dp"/>
 
     </RelativeLayout>
-
-
-
-
-
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Browse Files"
+            android:id="@+id/photo_choose_button"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
 </LinearLayout>
