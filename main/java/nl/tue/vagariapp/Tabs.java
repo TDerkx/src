@@ -58,14 +58,18 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
     public static Activity main;
 
     private GoogleMap map;
-
+    boolean mapstatus = false;
+    LatLng mapStart = new LatLng(0,0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs);
         main = this;
-
+        if(getIntent().getExtras().containsKey("mapStatus")){
+            mapstatus = getIntent().getExtras().getBoolean("mapStatus");
+            mapStart = (LatLng) getIntent().getExtras().get("latLong");
+        }
         pics.clear();
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
@@ -105,6 +109,7 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
                 byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 pics.add(decodedByte);
+
                 System.out.println("Add "+dataSnapshot.getKey()+" to UI after " +s);
             }
 
@@ -152,6 +157,7 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
     }
 
 
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         /* use the followimg part in a for each statement
@@ -159,12 +165,19 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
          * sort colors by album
          */
         map = googleMap;
-        setUpMap();
+
+        //if coming from picture preview(popup) via location of picture,
+        //sets that location as start for the map.
+        if(mapstatus){
+            setUpMap(mapStart);
+        } else {
+            LatLng start = new LatLng(0,0);
+            setUpMap(start);
+        }
     }
 
-    public void setUpMap() {
-        LatLng standard = new LatLng(0, 0);
-        map.moveCamera(CameraUpdateFactory.newLatLng(standard));
+    public void setUpMap(LatLng start) {
+        map.moveCamera(CameraUpdateFactory.newLatLng(start));
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.getUiSettings().setCompassEnabled(true);
         map.getUiSettings().setZoomControlsEnabled(true);
@@ -203,7 +216,12 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
         th.addTab(specs);
 
         //Make 'GALLERY' the default tab and set colors of tabs
-        th.setCurrentTab(1);
+        // if coming from picture preview(popup) by pressing location, sets MAP as default tab
+        if(mapstatus){
+            th.setCurrentTab(2);
+        } else {
+            th.setCurrentTab(1);
+        }
         TextView upload = (TextView)th.getTabWidget().getChildAt(0).findViewById(android.R.id.title);
         TextView gallery = (TextView)th.getTabWidget().getChildAt(1).findViewById(android.R.id.title);
         TextView maps = (TextView)th.getTabWidget().getChildAt(2).findViewById(android.R.id.title);
