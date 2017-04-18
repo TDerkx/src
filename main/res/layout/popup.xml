@@ -33,7 +33,7 @@
                 android:layout_marginTop="5dp" />
 
             <TextView
-                android:text="Date and Time:"
+                android:text="Date:"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView8"
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:text="Error DateTime"
+                android:text="Error Date"
                 android:ems="10"
                 android:id="@+id/editText2"
                 android:layout_weight="1"

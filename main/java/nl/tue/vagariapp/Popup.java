@@ -20,7 +20,7 @@ public class Popup extends Activity {
 
     Bitmap picture;
     LatLng latlong;
-    String dateTimeText;
+    String dateText;
     String albumText;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class Popup extends Activity {
         ImageView img = (ImageView) findViewById(R.id.imageView);
         img.setImageResource(R.drawable.cast_abc_scrubber_control_off_mtrl_alpha);
         EditText album = (EditText) findViewById(R.id.editText);
-        EditText dateTime = (EditText) findViewById(R.id.editText2);
+        EditText date = (EditText) findViewById(R.id.editText2);
         EditText location = (EditText) findViewById(R.id.editText3);
         Button close = (Button) findViewById(R.id.button5);
         Button map = (Button) findViewById(R.id.button6);
@@ -42,13 +42,13 @@ public class Popup extends Activity {
         if(getIntent().getExtras().containsKey("PicNData")){
             Bundle bundle = getIntent().getParcelableExtra("PicNData");
             albumText = bundle.getParcelable("album");
-            dateTimeText = bundle.getParcelable("dateTime");
+            dateText = bundle.getParcelable("date");
             latlong = bundle.getParcelable("location");
             picture = bundle.getParcelable("picture");
 
             //img.setImageResource(set image resource here!);
             album.setText(albumText);
-            dateTime.setText(dateTimeText);
+            date.setText(dateText);
             location.setText(latlong.toString());
 
             //this onclicklistener ensures that pressing the location moves you directly to map screen
