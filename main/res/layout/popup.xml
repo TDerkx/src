@@ -10,7 +10,7 @@
         android:layout_height="440dp"
         app:srcCompat="@drawable/cast_abc_scrubber_control_off_mtrl_alpha"
         android:id="@+id/imageView"
-        android:layout_weight="0.94" />
+        android:layout_weight="0.51" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -29,21 +29,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView9"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp" />
+                android:layout_marginBottom="2dp" />
 
             <TextView
                 android:text="Date:"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView8"
-                android:layout_marginBottom="5dp" />
+                android:layout_marginBottom="2dp" />
 
             <TextView
                 android:text="Location:"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView7"
+                android:layout_marginBottom="2dp" />
+
+            <TextView
+                android:text="Remark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView11"
                 android:layout_marginBottom="5dp" />
         </LinearLayout>
 
@@ -84,6 +90,17 @@
                 android:layout_weight="1"
                 android:textSize="14sp"
                 android:background="@android:color/white" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text="No Remark"
+                android:ems="10"
+                android:id="@+id/editText4"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:textSize="14sp" />
 
         </LinearLayout>
 

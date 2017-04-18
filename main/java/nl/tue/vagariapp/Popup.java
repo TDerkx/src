@@ -33,6 +33,7 @@ public class Popup extends Activity {
         EditText album = (EditText) findViewById(R.id.editText);
         EditText date = (EditText) findViewById(R.id.editText2);
         EditText location = (EditText) findViewById(R.id.editText3);
+        EditText remark = (EditText) findViewById(R.id.editText4);
         Button close = (Button) findViewById(R.id.button5);
         Button map = (Button) findViewById(R.id.button6);
 
@@ -45,11 +46,14 @@ public class Popup extends Activity {
             dateText = bundle.getParcelable("date");
             latlong = bundle.getParcelable("location");
             picture = bundle.getParcelable("picture");
+            //if we can get remarks on the database: implement here
+
 
             //img.setImageResource(set image resource here!);
             album.setText(albumText);
             date.setText(dateText);
             location.setText(latlong.toString());
+            //remark.setText(remarkText);
 
             //this onclicklistener ensures that pressing the location moves you directly to map screen
             //it does so by putting a boolean as an extra to the intent, and a latlong to get to
@@ -57,6 +61,9 @@ public class Popup extends Activity {
             map.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    //upload changes here!
+
                     Intent activity2 = new Intent (Popup.this, Tabs.class);
                     activity2.putExtra("mapStatus", true);
                     activity2.putExtra("latLong", latlong);
@@ -69,6 +76,9 @@ public class Popup extends Activity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //upload changes here!
+
                 startActivity(new Intent(Popup.this, Tabs.class));
             }
         });
