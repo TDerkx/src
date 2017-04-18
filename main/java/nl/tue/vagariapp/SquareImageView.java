@@ -5,10 +5,10 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * Created by Stijn Albert on 2-4-2017.
+ * Created by s157091 on 2-4-2017.
  */
 
-//Custom ImageView with square ratio
+//Custom
 
 public class SquareImageView extends ImageView {
     public SquareImageView(Context context) {

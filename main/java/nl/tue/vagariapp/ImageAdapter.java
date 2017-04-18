@@ -1,6 +1,10 @@
 package nl.tue.vagariapp;
 
 import android.content.Context;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +20,11 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        return Upload.myPhotos.size();
+        return Tabs.pics.size();
     }
 
     public Object getItem(int position) {
-        return Upload.myPhotos.get(position);
+        return Tabs.pics.get(position);
     }
 
     public long getItemId(int position) {return 0;}
@@ -40,7 +44,10 @@ public class ImageAdapter extends BaseAdapter {
             //imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             //imageView.setPadding(8, 8, 8, 8);
 
-            imageView.setImageBitmap(Upload.myPhotos.get(position));
+
+
+            imageView.setImageBitmap(Tabs.pics.get(position));
+            System.out.println("printed picture: " + Tabs.pics.get(position));
 
         } else {
             gridView = (View) convertView;

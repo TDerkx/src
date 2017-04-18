@@ -1,33 +1,29 @@
 package nl.tue.vagariapp;
 
-import android.app.Activity;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.content.Intent;
-import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.ButtonBarLayout;
-import android.text.TextUtils;
 import android.widget.Toast;
+
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
-import java.util.HashMap;
 
 /**
  * Created by s157091 on 28-3-2017.
@@ -44,10 +40,14 @@ public class Login extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthList;
 
+    static String UID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.login_layout);
 
 
@@ -63,8 +63,8 @@ public class Login extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    UID = user.getUid();
                     startActivity(new Intent(Login.this, Tabs.class));
-
                 }
             }
         };
@@ -114,8 +114,10 @@ public class Login extends AppCompatActivity {
                 startRegister();
             }
         });
+    }
 
-
+    public static String getUID() {
+        return UID;
     }
 
     private void startRegister() {
@@ -178,4 +180,5 @@ public class Login extends AppCompatActivity {
         });
         mAuth.signInWithEmailAndPassword(email, password);
     }
+
 }
