@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,10 +30,12 @@ public class Popup extends Activity {
 
         ImageView img = (ImageView) findViewById(R.id.imageView);
         img.setImageResource(R.drawable.cast_abc_scrubber_control_off_mtrl_alpha);
-        TextView album = (TextView) findViewById(R.id.textView3);
-        TextView dateTime = (TextView) findViewById(R.id.textView5);
-        TextView location = (TextView) findViewById(R.id.textView6);
+        EditText album = (EditText) findViewById(R.id.editText);
+        EditText dateTime = (EditText) findViewById(R.id.editText2);
+        EditText location = (EditText) findViewById(R.id.editText3);
         Button close = (Button) findViewById(R.id.button5);
+        Button map = (Button) findViewById(R.id.button6);
+
 
         //this if checks for the neccesary extra data with the intent.
         //put all the date in a Bundle and put the bundle as an extra to the intent.
@@ -51,7 +54,7 @@ public class Popup extends Activity {
             //this onclicklistener ensures that pressing the location moves you directly to map screen
             //it does so by putting a boolean as an extra to the intent, and a latlong to get to
             //the correct position.
-            location.setOnClickListener(new View.OnClickListener() {
+            map.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent activity2 = new Intent (Popup.this, Tabs.class);

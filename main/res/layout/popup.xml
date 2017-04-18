@@ -52,38 +52,58 @@
             android:layout_width="218dp"
             android:layout_height="match_parent">
 
-            <TextView
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
                 android:text="Error Album"
+                android:ems="10"
+                android:id="@+id/editText"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:textSize="14sp" />
+
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView3"
-                android:layout_weight="1"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp" />
-
-            <TextView
+                android:inputType="textPersonName"
                 android:text="Error DateTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView5"
+                android:ems="10"
+                android:id="@+id/editText2"
                 android:layout_weight="1"
-                android:elevation="1dp"
-                android:layout_marginBottom="5dp" />
+                android:textSize="14sp"
+                android:background="@android:color/white" />
 
-            <TextView
-                android:text="Error Location"
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView6"
+                android:inputType="textPersonName"
+                android:text="Error Location"
+                android:ems="10"
+                android:id="@+id/editText3"
                 android:layout_weight="1"
-                android:layout_marginBottom="5dp" />
+                android:textSize="14sp"
+                android:background="@android:color/white" />
+
         </LinearLayout>
 
-        <Button
-            android:text="Close"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/button5" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:text="Map"
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:id="@+id/button6" />
+
+            <Button
+                android:text="Close"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/button5" />
+        </LinearLayout>
 
     </LinearLayout>
 
