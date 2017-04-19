@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/darkPurple">
 
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="75dp"
@@ -33,7 +32,8 @@
         android:layout_height="45dp"
         android:inputType="textEmailAddress"
         android:background="@color/white"
-        android:hint="Email"
+        android:hint="@string/Email"
+        android:textColorHint="@color/grey"
         android:padding="14dp"
         android:id="@+id/userinput"
         android:fontFamily="sans-serif"
@@ -46,7 +46,8 @@
         android:layout_height="45dp"
         android:inputType="textPassword"
         android:background="@color/white"
-        android:hint="Password"
+        android:hint="@string/Password"
+        android:textColorHint="@color/grey"
         android:fontFamily="sans-serif"
         android:padding="14dp"
         android:id="@+id/passwordinput"
@@ -58,7 +59,7 @@
 
     <Button
         android:layout_width="166dp"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:background="#cccccc"
         android:text="Register"
         android:id="@+id/registerButton"
@@ -68,8 +69,8 @@
 
     <Button
         android:layout_width="166dp"
-        android:layout_height="wrap_content"
-        android:background="@color/Plum"
+        android:layout_height="45dp"
+        android:background="@color/lightplum"
         android:text="Login"
         android:id="@+id/loginButton"
         android:layout_below="@+id/passwordinput"
