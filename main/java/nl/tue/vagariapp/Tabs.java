@@ -13,6 +13,8 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ExpandableListView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TabHost;
@@ -38,7 +40,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Stijn Albert  on 19-3-2017.
@@ -47,30 +52,40 @@ import java.util.ArrayList;
 public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
 
     public TabHost th;
-    private DatabaseReference mDatabase;
 
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthList;
-
-    public static ArrayList<Bitmap> pics = new ArrayList<>();
     public static ArrayList<Picture> myPhotos = new ArrayList<>();
+    public static ArrayList<String> keys = new ArrayList<>();
 
     public static Activity main;
 
     private GoogleMap map;
-    boolean mapstatus = false;
-    LatLng mapStart = new LatLng(0,0);
+
+    int selectedPic;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthList;
+
+    ExpandableListAdapter listAdapter;
+    ExpandableListView expListView;
+    public List<String> listDataHeader = new ArrayList<>();
+    final public static HashMap<String, ArrayList<Picture>> listDataChild = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabs);
         main = this;
-        if(getIntent().getExtras().containsKey("mapStatus")){
-            mapstatus = getIntent().getExtras().getBoolean("mapStatus");
-            mapStart = (LatLng) getIntent().getExtras().get("latLong");
-        }
-        pics.clear();
+
+        // get the listview
+        expListView = (ExpandableListView) findViewById(R.id.lvExp);
+
+
+        // preparing list data
+        prepareListData();
+
+        // setting list adapter
+
+        myPhotos.clear();
+        keys.clear();
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
@@ -79,9 +94,8 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
 
         final String currentUser = Login.getUID();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("users/" + currentUser + "/pictures/");
+        final DatabaseReference ref = database.getReference("users/" + currentUser + "/albums/");
         ref.keepSynced(true);
-
 
 
         setUpTabs();
@@ -98,52 +112,7 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
             }
         };
 
-        ref.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                System.out.println("Loading photos of user: " + currentUser);
-                Picture picture = dataSnapshot.getValue(Picture.class);
-                myPhotos.add(picture);
 
-                String encodedImage = picture.getImage();
-                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                pics.add(decodedByte);
-
-                System.out.println("Add "+dataSnapshot.getKey()+" to UI after " +s);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("We're done loading the initial "+dataSnapshot.getChildrenCount()+" items, from user: " + currentUser);
-                GridView gv = (GridView)findViewById(R.id.gridView);
-                gv.setAdapter(new ImageAdapter(Tabs.this));
-
-                createMarkers();
-            }
-            public void onCancelled(DatabaseError firebaseError) { }
-        });
 
         ImageButton bSettings = (ImageButton)findViewById(R.id.bSettings);
         bSettings.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +123,39 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
                 finish();
             }
         });
+
+        /*final ImageButton bTrash = (ImageButton)findViewById(R.id.bTrash);
+        bTrash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Deleting: "+ selectedPic + " -- " +listDataHeader.get(selectedPic));
+                String key = listDataHeader.get(selectedPic);
+                ref.child(key).removeValue();
+                bTrash.setVisibility(View.INVISIBLE);
+                bTrash.setClickable(false);
+                finish();
+            }
+        });
+        bTrash.setVisibility(View.INVISIBLE);
+        bTrash.setClickable(false);
+
+        GridView gv = (GridView)findViewById(R.id.lblListItem);
+
+        // Delete function, doesn't work yet
+        gv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedPic = position;
+                System.out.println(selectedPic + " -- " +keys.get(selectedPic));
+                bTrash.setVisibility(View.VISIBLE);
+                bTrash.setClickable(true);
+                return true;
+            }
+        });*/
+
+
     }
+
 
 
 
@@ -165,19 +166,12 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
          * sort colors by album
          */
         map = googleMap;
-
-        //if coming from picture preview(popup) via location of picture,
-        //sets that location as start for the map.
-        if(mapstatus){
-            setUpMap(mapStart);
-        } else {
-            LatLng start = new LatLng(0,0);
-            setUpMap(start);
-        }
+        setUpMap();
     }
 
-    public void setUpMap(LatLng start) {
-        map.moveCamera(CameraUpdateFactory.newLatLng(start));
+    public void setUpMap() {
+        LatLng standard = new LatLng(0, 0);
+        map.moveCamera(CameraUpdateFactory.newLatLng(standard));
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         map.getUiSettings().setCompassEnabled(true);
         map.getUiSettings().setZoomControlsEnabled(true);
@@ -216,12 +210,7 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
         th.addTab(specs);
 
         //Make 'GALLERY' the default tab and set colors of tabs
-        // if coming from picture preview(popup) by pressing location, sets MAP as default tab
-        if(mapstatus){
-            th.setCurrentTab(2);
-        } else {
-            th.setCurrentTab(1);
-        }
+        th.setCurrentTab(1);
         TextView upload = (TextView)th.getTabWidget().getChildAt(0).findViewById(android.R.id.title);
         TextView gallery = (TextView)th.getTabWidget().getChildAt(1).findViewById(android.R.id.title);
         TextView maps = (TextView)th.getTabWidget().getChildAt(2).findViewById(android.R.id.title);
@@ -255,6 +244,7 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
     }
 
     public void createMarkers() {
+        map.clear();
         ArrayList<LatLng> gglLocations = new ArrayList<>();
         gglLocations.clear();
         for(int i = 0; i < myPhotos.size(); i++ ) {
@@ -268,8 +258,114 @@ public class Tabs extends FragmentActivity  implements OnMapReadyCallback {
             if (myPhotos.get(i).location == null) {
 
             } else {
-                addMarker(map, gglLocations.get(i), myPhotos.get(i).album, myPhotos.get(i).date, (float) 150);
+                addMarker(map, gglLocations.get(i), "title", myPhotos.get(i).date, (float) 150);
             }
         }
+    }
+
+    private void prepareListData() {
+
+        final String currentUser = Login.getUID();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference albumRef = database.getReference("users/" + currentUser + "/albums/");
+
+        albumRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String album = dataSnapshot.getKey();
+                listDataHeader.add(album);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        albumRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (int i = 0; i < listDataHeader.size(); i++) {
+                    retrieveAlbum(listDataHeader.get(i));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void retrieveAlbum(final String album) {
+        final String currentUser = Login.getUID();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference picRef = database.getReference("users/" + currentUser + "/albums/" + album);
+        final ArrayList<Picture>list = new ArrayList<>();
+        list.clear();
+
+
+        picRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Picture picture = dataSnapshot.getValue(Picture.class);
+                list.add(picture);
+                myPhotos.add(picture);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        picRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                listDataChild.put(album, list);
+                if (listDataChild.size() == listDataHeader.size()) {
+                    listAdapter = new ExpandableListAdapter(Tabs.this, listDataHeader, listDataChild);
+                    expListView.setAdapter(listAdapter);
+                    for (int i = 0; i < listAdapter.getGroupCount(); i ++) {
+                        expListView.expandGroup(i);
+                    }
+                createMarkers();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }

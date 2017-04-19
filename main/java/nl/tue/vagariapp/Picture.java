@@ -9,15 +9,13 @@ import android.graphics.Bitmap;
 public class Picture {
 
     public String image;
-    public String album;
     public MyLatLng location;
     public String date;
 
     public Picture() {}
 
-    public Picture(String image, String album, MyLatLng location, String date) {
+    public Picture(String image, MyLatLng location, String date) {
         this.image = image;
-        this.album = album;
         this.location = location;
         this.date = date;
     }
@@ -26,9 +24,6 @@ public class Picture {
         return image;
     }
 
-    public String getAlbum() {
-        return album;
-    }
 
     public MyLatLng getLocation() {
         return location;

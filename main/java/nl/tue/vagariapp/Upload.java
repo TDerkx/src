@@ -18,6 +18,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,11 +28,18 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,8 +58,12 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -59,13 +71,14 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Stijn Albert  on 26-3-2017.
  */
 public class Upload extends Activity  implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ActivityCompat.OnRequestPermissionsResultCallback {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, ActivityCompat.OnRequestPermissionsResultCallback, AdapterView.OnItemSelectedListener {
 
     public Bitmap toBeUploaded;
     public String encoded;
@@ -73,25 +86,32 @@ public class Upload extends Activity  implements
     private EditText mLocationText;
     private EditText mDateText;
 
+    ArrayList<String> spinnerArray = new ArrayList<>();
+
+
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
 
     static double mLatitude;
     static double mLongitude;
+    String album;
+
 
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     boolean gps_enabled;
 
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference ref = database.getReference();
+    final String currentUser = Login.getUID();
+    final DatabaseReference ref1 = database.getReference("users/" + currentUser + "/albums/");
+    final DatabaseReference ref = database.getReference();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.upload);
+        setContentView(R.layout.upload2);
 
         buildGoogleApiClient();
 
@@ -146,7 +166,7 @@ public class Upload extends Activity  implements
             }
         });
 
-        Button btn_choose_photo = (Button)findViewById(R.id.photo_choose_button); // Replace with id of your button.
+        Button btn_choose_photo = (Button)findViewById(R.id.bFiles); // Replace with id of your button.
         btn_choose_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,7 +177,7 @@ public class Upload extends Activity  implements
             }
         });
 
-        Button makePhoto = (Button)findViewById(R.id.makePhoto);
+        Button makePhoto = (Button)findViewById(R.id.bCamera);
         makePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,22 +192,27 @@ public class Upload extends Activity  implements
         int year = c.get(Calendar.YEAR);
         final String today =  day+"/"+month+"/"+year;
 
-        Button bUpload = (Button)findViewById(R.id.bUpload);
+        RelativeLayout bUpload = (RelativeLayout) findViewById(R.id.bUpload);
         bUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MyLatLng latLng = new MyLatLng(mLatitude, mLongitude);
-                mAlbumText = (EditText)findViewById(R.id.AlbumInput);
+
                 mLocationText = (EditText)findViewById(R.id.LocationInput);
                 mDateText = (EditText)findViewById(R.id.DateInput);
 
-                final String album = mAlbumText.getText().toString();
+
                 final String location = mLocationText.getText().toString();
                 final String date = mDateText.getText().toString();
 
                 updateLocation();
                 final String currentUser = Login.getUID();
 
+                if (album.equals("Choose Album")) {
+                    Toast.makeText(Upload.this, "Please choose an album",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 if (toBeUploaded == null) {
                     Toast.makeText(Upload.this, "No image selected",
@@ -245,15 +270,71 @@ public class Upload extends Activity  implements
                 }
             }
         });
+
+        spinnerArray.clear();
+        spinnerArray.add("Choose Album");
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setOnItemSelectedListener(this);
+        spinner.setAdapter(adapter);
+
+        final ArrayList<String> tempAlbums = new ArrayList<>();
+
+        ref1.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String album = dataSnapshot.getKey();
+                tempAlbums.add(album);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        ref1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                java.util.Collections.sort(tempAlbums);
+                for (int i = 0; i < tempAlbums.size(); i++) {
+                    spinnerArray.add(tempAlbums.get(i));
+                }
+                spinnerArray.add("Create new");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void writeNewPicture(String userId, String image, String album, MyLatLng location, String date) {
-        Picture picture = new Picture(image, album, location, date);
-        ref.child("users").child(userId).child("pictures").push().setValue(picture);
+        Picture picture = new Picture(image, location, date);
+        ref.child("users").child(userId).child("albums").child(album).push().setValue(picture);
         Log.d("test", "writeNewPicture: exec ");
     }
 
-    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1234;
 
     public boolean checkPermissionREAD_EXTERNAL_STORAGE(final Context context) {
         int check = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -298,7 +379,6 @@ public class Upload extends Activity  implements
                     // contacts-related task you need to do.
 
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
@@ -313,6 +393,7 @@ public class Upload extends Activity  implements
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        ImageView preview = (ImageView)findViewById(R.id.preview);
 
         if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
             switch (requestCode) {
@@ -330,7 +411,7 @@ public class Upload extends Activity  implements
                     }
                     break;
 
-                case 123:
+                case 1234:
                     if (resultCode == RESULT_OK) {
                         Uri selectedImage = data.getData();
                         String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -351,6 +432,7 @@ public class Upload extends Activity  implements
                         byte[] byteArray = byteArrayOutputStream .toByteArray();
                         encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
+                        preview.setImageBitmap(toBeUploaded);
 
             /* Now you have choosen image in Bitmap format in object "yourSelectedImage". You can use it in way you want! */
                     }
@@ -363,6 +445,8 @@ public class Upload extends Activity  implements
                         toBeUploaded.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                         byte[] byteArray = byteArrayOutputStream .toByteArray();
                         encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+                        preview.setImageBitmap(toBeUploaded);
                     }
             }
         }
@@ -456,4 +540,35 @@ public class Upload extends Activity  implements
         return p1;
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        String userSpinnerChoice = parent.getItemAtPosition(pos).toString();
+        if (userSpinnerChoice.equals("Create new")) {
+            final EditText input = new EditText(Upload.this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            input.setLayoutParams(lp);
+            new AlertDialog.Builder(Upload.this)
+                    .setView(input)
+                    .setTitle("Create new album")
+                    .setMessage("Provide a name for your new album.")
+                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            ref1.child(input.getText().toString()).setValue(1);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .show();
+        } else {
+            album = userSpinnerChoice;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {    }
 }
